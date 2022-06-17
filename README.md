@@ -1,5 +1,7 @@
 # immune_health_electron_app
 
+Application for Immune Health file upload portal
+
 ## Project setup
 ```
 Using Node v16.15.1
