@@ -1,0 +1,86 @@
+<template>
+  <div class="subheader">
+    <span class="route-info">
+      <span v-if="showBackNavigationContainer" class="back-navigation-container">
+        <router-link :to="previousRoute" exact>
+          <svg-icon
+            class="back-arrow"
+            icon="icon-arrow-left"
+            height="22"
+            width="22"
+            color="#000"
+          />
+        </router-link>
+      </span>
+      <span class="text-container">
+        <slot name="text" />
+      </span>
+    </span>
+    <span class="button-container">
+      <slot name="buttons" />
+    </span>
+  </div>
+</template>
+
+<script>
+import { isEmpty } from 'ramda'
+
+export default {
+  name: 'IhSubheader',
+  props: {
+    previousRoute: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    showBackNavigationContainer() {
+      return !isEmpty(this.previousRoute)
+    }
+  }
+}
+
+</script>
+
+<style scoped lang="scss">
+@import '@/assets/css/_variables.scss';
+.subheader {
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  display: flex;
+  background-color: $purple_2;
+  position: relative;
+  width: 100%;
+  min-width: fit-content;
+  background-color: rgba(189, 189, 189, .1);
+  font-weight: 400;
+  padding: 1rem 4rem;
+}
+.text-container {
+  font-family: 'system-ui';
+  font-weight: 100;
+  color: black;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1rem;
+  display: flex;
+}
+.text-container:hover {
+  cursor: default;
+}
+.button-container {
+  display: flex;
+  button:not(:last-of-type) {
+    margin-right: .5rem;
+  }
+}
+.route-info {
+  display: flex;
+}
+.back-navigation-container {
+  margin-right: 1rem;
+}
+</style>
