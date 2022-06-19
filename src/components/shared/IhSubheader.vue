@@ -56,6 +56,7 @@ export default {
   background-color: rgba(189, 189, 189, .1);
   font-weight: 400;
   padding: 1rem 4rem;
+  margin-bottom: 1rem;
 }
 .text-container {
   font-family: 'system-ui';
