@@ -8,7 +8,7 @@
     </div>
     <span class="title">Penn Immune Health Application</span>
     <span>
-      <ih-button>
+      <ih-button v-on:click="login">
         <svg-icon
           class="login-icon"
           icon="icon-person"
@@ -16,7 +16,12 @@
           width="18"
           color="#fff"
         />
-        Login
+        <span v-if="!isLoggedIn">
+          Login
+        </span>
+        <span v-else>
+          {{username}}
+        </span>
       </ih-button>
     </span>
   </div>
@@ -24,6 +29,7 @@
 
 <script>
 import IhButton from '@/components/shared/IhButton.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'IhHeader',
@@ -37,7 +43,10 @@ export default {
     }
   },
   methods: {
-
+    ...mapActions(['login']),
+  },
+  computed: {
+    ...mapGetters(['username', 'isLoggedIn'])
   }
 }
 </script>
