@@ -6,7 +6,8 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    profile: null
+    profile: null,
+    selectedStudy: {}
   },
   getters: {
     username (state) {
@@ -20,9 +21,15 @@ const store = new Vuex.Store({
     },
     isLoggedIn (state) {
       return state.profile !== null
+    },
+    selectedStudy (state) {
+      return state.selectedStudy
     }
   },
   mutations: {
+    SET_SELECTED_STUDY(state, data) {
+      state.selectedStudy = data
+    },
   },
   actions: {
     login() {
@@ -31,6 +38,9 @@ const store = new Vuex.Store({
         lastName: 'Profile',
         token: ''
       }
+    },
+    setSelectedStudy: ({ commit }, data) => {
+      commit('SET_SELECTED_STUDY', data)
     }
   },
 });

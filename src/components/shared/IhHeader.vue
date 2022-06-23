@@ -6,7 +6,7 @@
         class="logo"
       >
     </div>
-    <span class="title">Penn Immune Health Application</span>
+    <span class="title heading1">Penn Immune Health Application</span>
     <span>
       <ih-button v-on:click="login">
         <svg-icon
@@ -76,10 +76,7 @@ export default {
   flex-shrink: 0;
 }
 .title {
-  font-family: 'system-ui';
-  font-weight: 100;
   color: white;
-  font-size: 18px;
   white-space: nowrap;
   margin-right: 1rem;
 }

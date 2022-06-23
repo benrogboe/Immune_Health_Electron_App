@@ -12,7 +12,7 @@
         </ih-button>
       </template>
     </ih-subheader>
-    <div class="page-content">
+    <div>
     </div>
   </div>
 </template>
