@@ -2,10 +2,12 @@
 
 html {
   min-width: fit-content;
+  font-family: $system-font;
 }
 body {
   margin: 0;
 }
-.page-content {
-  padding: 0 4rem;
+.heading1 {
+  font-weight: 100;
+  font-size: 18px;
 }

@@ -12,7 +12,7 @@
           />
         </router-link>
       </span>
-      <span class="text-container">
+      <span class="text-container heading1">
         <slot name="text" />
       </span>
     </span>
@@ -50,19 +50,15 @@ export default {
   box-sizing: border-box;
   display: flex;
   background-color: $purple_2;
-  position: relative;
   width: 100%;
   min-width: fit-content;
   background-color: rgba(189, 189, 189, .1);
   font-weight: 400;
-  padding: 1rem 4rem;
+  padding: 1rem 1rem;
   margin-bottom: 1rem;
 }
 .text-container {
-  font-family: 'system-ui';
-  font-weight: 100;
   color: black;
-  font-size: 18px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -83,5 +79,6 @@ export default {
 }
 .back-navigation-container {
   margin-right: 1rem;
+  align-self: center;
 }
 </style>

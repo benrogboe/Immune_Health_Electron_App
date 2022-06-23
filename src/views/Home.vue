@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ih-subheader>
+    <ih-subheader class="subheader">
       <span slot="text">
         Penn Immune Health Application
       </span>
@@ -82,5 +82,11 @@ export default {
   span:not(:last-of-type) {
     margin-right: 1rem;
   }
+}
+.page-content {
+  padding: 0 4rem;
+}
+.subheader {
+  padding: 1rem 4rem !important;
 }
 </style>
