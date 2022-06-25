@@ -4,7 +4,7 @@
       Studies
     </div>
     <template v-if="studies.length > 0">
-      <div v-for="study in studies" class="study-container heading1" :class="getStudyName(study) === getStudyName(selectedStudy) ? 'selected-study' : 'not-selected-study'" :key="study.sstudyid" v-on:click="selectStudy">
+      <div v-for="study in studies" class="study-container heading1" :class="getStudyName(study) === getStudyName(selectedStudy) ? 'selected-study' : 'not-selected-study'" :key="study.sstudyid" v-on:click="studySelected">
         {{ getStudyName(study) }}
       </div>
     </template> 
@@ -39,14 +39,19 @@ export default {
       }
       return propOr('', 'value', studyValues[0])
     },
-    selectStudy(e) {
+    studySelected(e) {
       const studyName = pathOr('', ['target', 'outerText'], e)
       const selectedStudy = this.studies.find(study => this.getStudyName(study) === studyName)
-      this.setSelectedStudy(selectedStudy)
+      this.selectStudy(selectedStudy)
+    },
+    selectStudy(study) {
+      this.setSelectedStudy(study)
+      const studyId = propOr('', 'id', study)
+      this.$emit('study-selected', studyId)
     }
   },
   computed: {
-    ...mapGetters(['selectedStudy'])
+    ...mapGetters(['allStudies', 'selectedStudy'])
   }
 }
 </script>

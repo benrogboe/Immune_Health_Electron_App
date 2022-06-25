@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters(['allStudies', 'selectedStudy', 'selectedStudyName']),
-  }
+  },
 }
 </script>
 <style scoped lang="scss">
