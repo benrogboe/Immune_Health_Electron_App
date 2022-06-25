@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <span class="sidebar-container">
-      <bf-navigation-secondary :studies="allStudies" />
+      <bf-navigation-secondary :studies="allStudies" @study-selected="studySelected" />
     </span>
     <span class="selected-content-container">
       <ih-subheader previousRoute="/">
@@ -51,6 +51,11 @@ export default {
   },
   computed: {
     ...mapGetters(['allStudies', 'selectedStudy', 'selectedStudyName']),
+  },
+  methods: {
+    studySelected(studyId) {
+      console.log("STUDY SELECTED = ", studyId)
+    }
   }
 }
 </script>
