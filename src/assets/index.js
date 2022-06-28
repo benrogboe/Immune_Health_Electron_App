@@ -1,3 +1,7 @@
 require('./css/index.scss')
 require('./icons/icon-arrow-left')
 require('./icons/icon-person')
+require('./icons/icon-zoom-in')
+require('./icons/icon-zoom-out')
+require('./icons/icon-center')
+require('./icons/icon-fullscreen')

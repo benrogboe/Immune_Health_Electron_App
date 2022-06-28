@@ -32,6 +32,10 @@
           </ih-button>
         </template>
       </ih-subheader>
+      <p>graph browser here</p>
+      <div class="graph-browser-container">
+        <graph-browser/>
+      </div>
     </span>
   </div>
 </template>
@@ -40,6 +44,7 @@
 import IhSubheader from '@/components/shared/IhSubheader.vue'
 import IhButton from '@/components/shared/IhButton.vue'
 import BfNavigationSecondary from '@/components/bf-navigation/BfNavigationSecondary.vue'
+import GraphBrowser from '@/components/GraphBrowser/GraphBrowser.vue'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -47,7 +52,8 @@ export default {
   components: {
     IhSubheader,
     IhButton,
-    BfNavigationSecondary
+    BfNavigationSecondary,
+    GraphBrowser
   },
   computed: {
     ...mapGetters(['allStudies', 'selectedStudy', 'selectedStudyName']),
