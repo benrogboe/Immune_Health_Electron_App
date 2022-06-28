@@ -9,11 +9,11 @@
           File Upload
         </template>
         <template slot="buttons">
-          <ih-button>
+          <bf-button>
             <router-link to="/" exact>
               Main Menu
             </router-link>
-          </ih-button>
+          </bf-button>
         </template>
       </ih-subheader>
     </span>
@@ -22,7 +22,7 @@
 
 <script>
 import IhSubheader from '@/components/shared/IhSubheader.vue'
-import IhButton from '@/components/shared/IhButton.vue'
+import BfButton from '@/components/shared/BfButton.vue'
 import BfNavigationSecondary from '@/components/bf-navigation/BfNavigationSecondary.vue'
 import { mapGetters } from 'vuex'
 
@@ -31,7 +31,7 @@ export default {
   components: {
     BfNavigationSecondary,
     IhSubheader,
-    IhButton
+    BfButton
   },
   computed: {
     ...mapGetters(['allStudies', 'selectedStudyName'])
