@@ -25,33 +25,41 @@
           </div>
         </template>
         <template slot="buttons">
-          <ih-button>
+          <bf-button>
             <router-link to="/file-upload" exact>
               Upload Files
             </router-link>
-          </ih-button>
+          </bf-button>
         </template>
       </ih-subheader>
+      <div>
+        <bf-button v-on:click="updateSearchModalVisible(true)">
+          Search Studies
+        </bf-button>
+      </div>
     </span>
   </div>
 </template>
 
 <script>
 import IhSubheader from '@/components/shared/IhSubheader.vue'
-import IhButton from '@/components/shared/IhButton.vue'
+import BfButton from '@/components/shared/BfButton.vue'
 import BfNavigationSecondary from '@/components/bf-navigation/BfNavigationSecondary.vue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'StudiesBrowser',
   components: {
     IhSubheader,
-    IhButton,
+    BfButton,
     BfNavigationSecondary
   },
   computed: {
     ...mapGetters(['allStudies', 'selectedStudy', 'selectedStudyName']),
   },
+  methods: {
+    ...mapActions(['updateSearchModalVisible'])
+  }
 }
 </script>
 <style scoped lang="scss">
