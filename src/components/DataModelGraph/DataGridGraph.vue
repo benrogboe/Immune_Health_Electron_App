@@ -1,6 +1,12 @@
 <template>
+<!-- TODO: bring this back in for 'click outside' behavior
   <div
     v-click-outside="onClickOutsideGraph"
+    class="data-model-graph"
+    element-loading-background="#fff"
+  >
+-->
+  <div
     class="data-model-graph"
     element-loading-background="#fff"
   >
@@ -35,7 +41,7 @@ import { select } from 'd3-selection';
 
 import { pathOr, propOr } from 'ramda'
 import debounce from 'lodash/debounce'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 import DataModelGraphToolbar from './DataModelGraphToolbar/DataModelGraphToolbar.vue'
 //import ModelTooltip from './ModelTooltip/ModelTooltip.vue'
@@ -114,10 +120,10 @@ export default {
         height: 400
       },
       custom: null,
-      numberOfRows: 4,
+      numberOfRows: 10,
       binRegistry: [],
       drawTimer:null,
-      nrElemPerCol: 4,
+      nrElemPerCol: 10,
       recordSize: 12,
       cellOffset: 4,
       xOffset: 50,
@@ -126,7 +132,9 @@ export default {
       modelHeaderHeight: 14,
       nextCol: 1,  // used to generate unique colors for hidden canvas
       colorToNode: {},  //used to map colors to nodes
-      selectedNode: null
+      selectedNode: null,
+      datasetId: 'N:dataset:e2de8e35-7780-40ec-86ef-058adf164bbc',
+      interestedModels: ['study', 'samples', 'visits', 'patient']
     }
   },
 
@@ -134,7 +142,6 @@ export default {
     //will get whenever updated or changed
     ...mapState([
       'relationshipTypes',
-      'userToken',
       'config',
       'allSamples',
       'allVisits',
@@ -193,16 +200,20 @@ export default {
         }
       }
     },
-    userToken: {
-      handler: function() {
-        this.getModelData()
-      }
-    },
+    // userToken: {
+    //   handler: function() {
+    //     this.getModelData()
+    //   }
+    // },
     //whenever selected study changes, we want to get all of the related data and set them to the store
-    selectedStudy: {
-      handler: function() {
-        this.setAllRelatedPage1(this.selectedStudy,0);
-      }
+    //selectedStudy: {
+    //  handler: function() {
+    //    this.setAllRelatedPage1(this, this.selectedStudy,0);
+    //  }
+    //}
+
+    selectedStudy: function() {
+      this.updateView()
     }
   },
 
@@ -271,13 +282,19 @@ export default {
 
   methods: {
     ...mapActions(['setAllParticipants','setAllVisits','setAllSamples']), //include set all files potentially
+    ...mapGetters(['userToken']),
     //fetches and sets store to entries on the 'next' page for each model. Will call from the page advance bar bound to each model bin
-    setAllRelatedPage1: function(studyRecordId, pagenum) {
-      var modelList = ['patient','visits','samples','files'];
+    
+    updateView: function() {
+      var modelList = ['patient','visits','samples'/*,'files'*/];
+      // TODO: figure out pagenum
+      var pagenum = 0;
       var offset = 100*pagenum;
       var orderBy = '';
-      modelList.forEach(function (item,index){
-        switch (item) {
+
+      var vm = this
+      modelList.forEach(function (modelName){
+        switch (modelName) {
           case 'patient':
               orderBy = 'externalparticipantid';//verify data is in a list, if not, put it in one before sending off
               break;
@@ -293,7 +310,7 @@ export default {
         }
         const options = {
             method: 'GET',
-            url: `https://api.pennsieve.io/models/v1/datasets/%2FN%3Adataset%3Ae2de8e35-7780-40ec-86ef-058adf164bbc/concepts/study/instances/33a61ee7-fce9-4f0c-823c-78368ed8dc42/relations/${index}`,
+            url: `https://api.pennsieve.io/models/v1/datasets/${vm.datasetId}/concepts/${modelName}/instances`,
             params: {
                 limit: '100',
                 offset: `${offset}`,
@@ -303,21 +320,20 @@ export default {
               },
               headers: {
                 Accept: 'application/json',
-                Authorization: `${this.userToken}`
+                Authorization: `Bearer ${vm.userToken()}`
               }
             };
         axios.request(options).then(function (response) {
-          console.log(response.data);
-          switch (item){
+          switch (modelName){
               case 'patient':
                   //verify data is in a list, if not, put it in one before sending off
-                  this.setAllParticipants(response.data);
+                  vm.updatePatients(response.data);
                   break;
               case 'visits':
-                  this.setAllVisits(response.data);
+                  vm.updateVisits(response.data);
                   break;
               case 'samples':
-                  this.setAllSamples(response.data);
+                  vm.updateSamples(response.data);
                   break;
               case 'files':
                   console.log('nothing for files yet');
@@ -327,6 +343,22 @@ export default {
         });
       })
     },
+
+    updatePatients: function(data) {
+      console.log('updatePatients() data:')
+      console.log(data)
+    },
+
+    updateVisits: function(data) {
+      console.log('updateVisits() data:')
+      console.log(data)
+    },
+
+    updateSamples: function(data) {
+      console.log('updateSamples() data:')
+      console.log(data)
+    },
+
 
     onHoverElement: function(nodeData, x, y) {
 
@@ -421,10 +453,11 @@ export default {
 
         if (this.binRegistry[index] == 0) {
           let remainingRows =  this.numberOfRows- (index % this.numberOfRows)
-          //let allRemainingAvailable = true
+          let allRemainingAvailable = true
           for (let i = 0; i < remainingRows; i++){
             if (this.binRegistry[index + i] != 0){
-              //allRemainingAvailable = false
+              // eslint-disable-next-line no-unused-vars
+              allRemainingAvailable = false
             }
           }
           [bins, numRows, numCols] = this.fitBin(modelId, numBins, 1, index)
@@ -442,7 +475,7 @@ export default {
       this.recordPool[modelId].isPending = true
       this.sendXhr(`${this.recordsUrl}/${modelId}/instances?limit=${numberOfRecords}&offset=${offset}`, {
         header: {
-          'Authorization': `bearer ${this.userToken}`
+          'Authorization': `bearer ${this.userToken()}`
         }
       })
         .then(response => {
@@ -600,20 +633,21 @@ export default {
     },
 
     getModelData: function() {
-      if (!this.userToken) {
+      if (!this.userToken()) {
         return
       }
 
       let vm = this
       this.sendXhr(this.graphUrl, {
         header: {
-          'Authorization': `bearer ${this.userToken}`
+          'Authorization': `Bearer ${this.userToken()}`
         }
       })
         .then(response => {
+          console.log(response)
           vm.hasData = true
           vm.isLoading = false
-          vm.modelData = response.filter(x => x.type === 'concept' && x.displayName === 'study' || 'samples' || 'visits' || 'patient')
+          vm.modelData = response.filter(x => x.type === 'concept').filter(x => vm.interestedModels.includes(x.displayName))
 
           let startIndex = 0
           vm.modelData.map(x => {
@@ -647,7 +681,7 @@ export default {
             }
           )
 
-          vm.binRegistry = Array(100).fill(0)
+          vm.binRegistry = Array(5000).fill(0)
           vm.modelData.forEach( x => {
             [x.bins, x.numRows, x.numCols] = this.findBins(x.id, x.count)
           })

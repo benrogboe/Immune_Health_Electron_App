@@ -176,11 +176,4 @@
       }
     }
   }
-.login-icon {
-  margin-right: 1rem;
-}
-.icon-zoom-in {
-  margin-right: 1rem;
-}
-
 </style>

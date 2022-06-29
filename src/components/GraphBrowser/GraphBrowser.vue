@@ -124,8 +124,9 @@ import DataGridGraph from '@/components/DataModelGraph/DataGridGraph.vue'
        */
       setChartHeight: debounce(
         function() {
-          const rafter = document.querySelector('.bf-rafter')
-          const rafterHeight = this.isFullscreen ? 0 : rafter.offsetHeight
+          const header = document.querySelector('.header')
+          const subheader = document.querySelector('.subheader')
+          const rafterHeight = this.isFullscreen ? 0 : header.offsetHeight + subheader.offsetHeight
           this.chartHeight = window.innerHeight - rafterHeight
         },
         100
