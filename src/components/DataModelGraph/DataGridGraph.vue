@@ -35,6 +35,19 @@
 </template>
 
 <script>
+
+// TODO List
+// 1. try out API call to get records in context of selected study
+// 2. put returned records in store
+// 3. add watch on store values, on change render grid graph
+// 4. refactor mounted(): don't call getModelData()
+// 5. refactor getModelData(): ??? ~ remove? ~ repurpose?
+// 6. don't render until a study is selected
+// 7. wait to render until "all changes" are complete
+
+// CONSIDER:
+// 1. performance and efficiency, esp. when iterating over a lot of records
+
 import axios from 'axios'
 import * as d3 from 'd3'
 import { select } from 'd3-selection';
@@ -134,7 +147,12 @@ export default {
       colorToNode: {},  //used to map colors to nodes
       selectedNode: null,
       datasetId: 'N:dataset:e2de8e35-7780-40ec-86ef-058adf164bbc',
-      interestedModels: ['study', 'samples', 'visits', 'patient']
+      interestedModels: ['study', 'samples', 'visits', 'patient'],
+      selectedStudyRecords: {
+        'patients': [],
+        'visits': [],
+        'samples': []
+      }
     }
   },
 
@@ -161,14 +179,14 @@ export default {
       //const apiUrl = this.config.conceptsUrl
       //const datasetId = pathOr('', ['params', 'datasetId'])(this.$route)
       //if (apiUrl && datasetId)
-        return `https://api.pennsieve.io/models/v1/datasets/N:dataset:e2de8e35-7780-40ec-86ef-058adf164bbc/concepts/schema/graph`
+        return `https://api.pennsieve.io/models/v1/datasets/${this.datasetId}/concepts/schema/graph`
 
     },
     recordsUrl: function() {
       //const apiUrl = this.config.conceptsUrl
       //const datasetId = pathOr('', ['params', 'datasetId'])(this.$route)
       //if (apiUrl && datasetId) {
-        return `https://api.pennsieve.io/models/v1/datasets/e2de8e35-7780-40ec-86ef-058adf164bbc/concepts/`
+        return `https://api.pennsieve.io/models/v1/datasets/${this.datasetId}/concepts/`
     },
 
     //wont need
@@ -290,6 +308,7 @@ export default {
       // TODO: figure out pagenum
       var pagenum = 0;
       var offset = 100*pagenum;
+      // eslint-disable-next-line no-unused-vars
       var orderBy = '';
 
       var vm = this
@@ -310,13 +329,10 @@ export default {
         }
         const options = {
             method: 'GET',
-            url: `https://api.pennsieve.io/models/v1/datasets/${vm.datasetId}/concepts/${modelName}/instances`,
+            url: `https://api.pennsieve.io/models/v1/datasets/${vm.datasetId}/concepts/study/instances/${vm.selectedStudy.id}/relations/${modelName}`,
             params: {
                 limit: '100',
-                offset: `${offset}`,
-                recordOrderBy: `${orderBy}`,
-                ascending: 'true',
-                includeIncomingLinkedProperties: 'false'
+                offset: `${offset}`
               },
               headers: {
                 Accept: 'application/json',
@@ -347,21 +363,27 @@ export default {
     updatePatients: function(data) {
       console.log('updatePatients() data:')
       console.log(data)
+      this.selectedStudyRecords['patients'] = data
     },
 
     updateVisits: function(data) {
       console.log('updateVisits() data:')
       console.log(data)
+      this.selectedStudyRecords['visits'] = data
     },
 
     updateSamples: function(data) {
       console.log('updateSamples() data:')
       console.log(data)
+      this.selectedStudyRecords['samples'] = data
     },
 
 
     onHoverElement: function(nodeData, x, y) {
+      // TODO: remove return
+      return
 
+      // eslint-disable-next-line no-unreachable
       if (nodeData) {
 
         if (nodeData.parent && !nodeData.details) {
@@ -644,7 +666,6 @@ export default {
         }
       })
         .then(response => {
-          console.log(response)
           vm.hasData = true
           vm.isLoading = false
           vm.modelData = response.filter(x => x.type === 'concept').filter(x => vm.interestedModels.includes(x.displayName))
