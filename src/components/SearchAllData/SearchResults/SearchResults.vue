@@ -58,14 +58,14 @@
                 />
               </button>
             </div>
-            <!--<el-pagination
+            <el-pagination
               :page-size="tableSearchParams.limit"
               :pager-count="5"
               :current-page="curFileSearchPage"
               layout="prev, pager, next"
               :total="tableResultsTotalCount"
               @current-change="onPaginationPageChange"
-            />-->
+            />
           </div>
           <files-table
             v-if="selectedButton === 'Files'"
@@ -129,6 +129,7 @@ const getQuery = (searchCriteria) => {
   }
   filters.forEach(filter => {
     const type = propOr('', 'type', filter)
+    console.log("FILTER = ", filter)
     if (type === 'dataset') {
       // make dataset endpoint call here
       const datasetIntId = propOr('', 'targetIntId', filter)
@@ -272,17 +273,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getModelById']),
-
-    ...mapState(['config', 'userToken', 'activeOrganization']),
-
-    /**
-     * Compute active organization int ID
-     * @returns {String}
-     */
-    activeOrgIntId: function() {
-      return pathOr('', ['organization', 'intId'], this.activeOrganization)
-    },
+    ...mapGetters(['getModelById', 'userToken']),
 
     /**
      * Gets files url
@@ -293,7 +284,7 @@ export default {
         toQueryParams
       )(this.tableSearchParams)
 
-      return `${this.config.apiUrl}/models/v2/organizations/${this.activeOrgIntId}/search/packages?${params}`
+      return `https://api.pennsieve.io/models/v2/organizations/655/search/packages?${params}`
     },
 
     /**
@@ -305,7 +296,7 @@ export default {
         toQueryParams
       )(this.tableSearchParams)
 
-      return `${this.config.apiUrl}/models/v2/organizations/${this.activeOrgIntId}/search/records?${params}`
+      return `https://api.pennsieve.io/models/v2/organizations/655/search/records?${params}`
     },
 
     /**
